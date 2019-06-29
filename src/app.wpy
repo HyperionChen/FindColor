@@ -1,0 +1,51 @@
+<script>
+  import wepy from 'wepy';
+  import 'wepy-async-function';
+
+  import { setStore } from 'wepy-redux';
+  import configStore from './store';
+
+  const store = configStore();
+  setStore(store);
+
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index'
+      ],
+      window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#EA474E',
+        navigationBarTitleText: '找色差',
+        navigationBarTextStyle: 'white',
+        backgroundColor: '#EA474E'
+      }
+    };
+
+    globalData = {
+      userInfo: null
+    };
+
+    constructor() {
+      super();
+      this.use('requestfix');
+    }
+
+    onLaunch() {
+
+    }
+
+    getUserInfo(cb) {
+      const that = this;
+      if (this.globalData.userInfo) {
+        return this.globalData.userInfo;
+      }
+      wepy.getUserInfo({
+        success(res) {
+          that.globalData.userInfo = res.userInfo;
+          cb && cb(res.userInfo);
+        }
+      });
+    }
+  }
+</script>

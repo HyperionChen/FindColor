@@ -1,0 +1,38 @@
+<template>
+  <view class="container">
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import utils from '@/utils/util';
+
+  export default class Index extends wepy.page {
+    config = {};
+
+    components = {};
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+
+<style lang="less">
+  @import "src/res/styles/base.less";
+
+  .container {
+    width: 100%;
+    height: 100%;
+    background-color: #EA474E;
+  }
+</style>
