@@ -1,25 +1,85 @@
 <template>
   <view class="container">
+    <view class="counter" wx:if="{{isStart}}">{{counter}}</view>
+
+    <view class="desc-wrapper" wx:if="{{!isStart}}">
+      <view class="desc1">测测你的眼睛对色差的辨识度</view>
+      <view class="desc2">点击开始试试吧</view>
+    </view>
+
+    <view class="operate-wrapper" wx:if="{{isStart}}">
+      <view class="operate-pause" @tap.stop="onPauseClick">{{isPause ? '继续' : '暂停'}}</view>
+      <view class="operate-reset" @tap.stop="onResetClick">重置</view>
+    </view>
+
+    <view class="start-wrapper" wx:if="{{!isStart}}">
+      <view class="operate-start" @tap.stop="onStartClick">开始</view>
+    </view>
 
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-  import utils from '@/utils/util';
+  import tip from '@/utils/tip';
 
   export default class Index extends wepy.page {
-    config = {};
 
-    components = {};
+    data = {
+      isStart: false, // 是否开始游戏
+      isPause: false, // 是否暂停
+      counter: 60, // 倒计时
+      timer: -1, // 定时器
 
-    data = {};
+    };
 
-    computed = {};
+    methods = {
+      onPauseClick() {
+        if (this.isPause) {
+          this.startTimer()
+        } else {
+          this.stopTimer()
+        }
+        this.isPause = !this.isPause
+        this.$apply()
+      },
+      onStartClick(){
+        this.isStart = true
+        this.isPause = false
+        this.counter = 60
+        this.$apply()
+        // 开始倒计时
+        this.startTimer()
+      },
+      onResetClick(){
+        // 重置倒计时
+        this.stopTimer()
+        this.isStart = false
+        this.isPause = false
+        this.counter = 60
+        this.$apply()
+      }
+    };
 
-    methods = {};
+    startTimer() {
+      let that = this
+      this.timer = setInterval(()=>{
+        if (that.counter >= 1) {
+          that.counter --;
+          that.$apply()
+        } else {
+          that.gameOver()
+        }
+      }, 1000)
+    }
 
-    events = {};
+    stopTimer() {
+      clearInterval(this.timer)
+    }
+
+    gameOver(){
+      tip.showToast('游戏结束', 'none')
+    }
 
     onLoad() {
 
@@ -34,5 +94,102 @@
     width: 100%;
     height: 100%;
     background-color: #EA474E;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+  }
+
+  .counter {
+    color: @color-white;
+    font-size: 80rpx;
+    margin-top: 40rpx;
+    font-weight: bold;
+  }
+
+  .desc-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 70rpx;
+
+    .desc1 {
+      font-size: 50rpx;
+      color: @color-white;
+      font-weight: bold;
+    }
+
+    .desc2 {
+      font-size: 40rpx;
+      color: @color-white;
+      font-weight: bold;
+    }
+
+  }
+
+  .operate-wrapper {
+    width: 100%;
+    position: absolute;
+    bottom: 80rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .operate-pause {
+      color: @color-white;
+      margin-left: 50rpx;
+      height: 50rpx;
+      border-radius: 10rpx;
+      background-color: #F99E1E;
+      padding: 20rpx 50rpx 20rpx 50rpx;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 40rpx;
+    }
+
+    .operate-reset {
+      color: @color-white;
+      margin-right: 50rpx;
+      height: 50rpx;
+      border-radius: 10rpx;
+      background-color: #F99E1E;
+      padding: 20rpx 50rpx 20rpx 50rpx;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 40rpx;
+    }
+
+  }
+
+  .start-wrapper {
+    width: 100%;
+    position: absolute;
+    bottom: 80rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .operate-start {
+      color: @color-white;
+      height: 50rpx;
+      border-radius: 10rpx;
+      background-color: #F99E1E;
+      padding: 20rpx 90rpx 20rpx 90rpx;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 40rpx;
+    }
   }
 </style>
