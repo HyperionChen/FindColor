@@ -19,6 +19,22 @@ class LevelManager {
       let number = i < 5 ? i + 2 : 7
       let diffPosition = Math.floor(Math.random() * number * number)
       let level = i + 1
+      let result = ''
+      if (level < 10) {
+        result = '跟瞎子没区别了'
+      } else if(level < 20) {
+        result = '该去配眼镜了'
+      } else if (level < 30) {
+        result = '接近正常人的水平'
+      } else if (level < 40) {
+        result = '目光如炬'
+      } else if (level < 50) {
+        result = '离娄之明'
+      } else if (level < 60) {
+        result = '明察秋毫'
+      } else {
+        result = '无敌'
+      }
 
       this.levels.push({
         level: level,
@@ -28,6 +44,7 @@ class LevelManager {
         array:new Array(number * number),
         diffPosition:diffPosition,
         radius:20,
+        result:result,
       })
     }
     return this.levels
