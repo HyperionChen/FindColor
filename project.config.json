@@ -7,7 +7,7 @@
 		"minified": false
 	},
 	"compileType": "miniprogram",
-	"appid": "wx80ac64c2c5f0d2b3",
+	"appid": "wxbbb696e5a8f11b3b",
 	"projectname": "findcolor",
 	"miniprogramRoot": "dist/",
 	"simulatorType": "wechat",
