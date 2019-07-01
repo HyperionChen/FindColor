@@ -49,7 +49,7 @@
   export default class Index extends wepy.page {
 
     data = {
-      status : 4,  // 1:未开始 2：游戏中 3:游戏暂停 4：游戏结束
+      status : 1,  // 1:未开始 2：游戏中 3:游戏暂停 4：游戏结束
       counter: 60, // 倒计时
       timer: -1, // 定时器
       levels: [],  // 所有的级别
@@ -79,6 +79,8 @@
         this.stopTimer()
         this.status = 1
         this.counter = 60
+        // 重置关卡
+        this.level = this.levels[0]
         this.$apply()
       },
       onClick(index) {
@@ -139,7 +141,7 @@
     onShareAppMessage() {
        return {
          title: '测测你的眼睛对色差的辨识度',
-         path: 'pages/index.wpy',
+         path: 'pages/index',
        }
     }
   }
@@ -263,6 +265,7 @@
 
   .operate-right:extend(.operate-item) {
     margin-right: 50rpx;
+    box-sizing: unset;
   }
 
   .start-wrapper:extend(.operate-wrapper) {

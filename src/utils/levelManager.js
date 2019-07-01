@@ -21,11 +21,11 @@ class LevelManager {
       let level = i + 1
       let result = ''
       if (level < 10) {
-        result = '跟瞎子没区别了'
+        result = '有眼无珠'
       } else if(level < 20) {
-        result = '该去配眼镜了'
+        result = '有眼如盲'
       } else if (level < 30) {
-        result = '接近正常人的水平'
+        result = '凡胎肉眼'
       } else if (level < 40) {
         result = '目光如炬'
       } else if (level < 50) {
@@ -33,7 +33,7 @@ class LevelManager {
       } else if (level < 60) {
         result = '明察秋毫'
       } else {
-        result = '无敌'
+        result = '火眼精金'
       }
 
       this.levels.push({
