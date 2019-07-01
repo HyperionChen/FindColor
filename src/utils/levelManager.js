@@ -25,7 +25,7 @@ class LevelManager {
       } else if(level < 20) {
         result = '有眼如盲'
       } else if (level < 30) {
-        result = '凡胎肉眼'
+        result = '肉眼凡胎'
       } else if (level < 40) {
         result = '目光如炬'
       } else if (level < 50) {

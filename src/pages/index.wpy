@@ -18,8 +18,9 @@
     </view>
 
     <view class="result-wrapper" wx:if="{{status == 4}}">
-      <view class="desc1">你眼睛色差辨识度水平：</view>
-      <view class="desc2">{{level.result}}</view>
+      <view class="desc1">{{level.level}}关</view>
+      <view class="desc2">你眼睛色差辨识度水平：</view>
+      <view class="desc3">{{level.result}}</view>
     </view>
 
     <view class="level-desc" wx:if="{{status == 2 || status == 3}}">第{{level.level}}关</view>
@@ -212,18 +213,26 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 70rpx;
 
     .desc1 {
-      font-size: 50rpx;
+      font-size: 80rpx;
       color: @color-white;
       font-weight: bold;
     }
 
     .desc2 {
+      font-size: 50rpx;
+      color: @color-white;
+      font-weight: bold;
+      margin-top: 10rpx;
+    }
+
+    .desc3 {
       font-size: 80rpx;
       color: @color-black;
       font-weight: bold;
-      margin-top: 10rpx;
+      margin-top: 15rpx;
     }
 
   }
