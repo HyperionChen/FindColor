@@ -1,13 +1,13 @@
 <template>
   <view class="container">
-    <view class="counter" wx:if="{{isStart}}">{{counter}}</view>
+    <view class="counter" wx:if="{{status == 2 || status == 3}}">{{counter}}</view>
 
-    <view class="desc-wrapper" wx:if="{{!isStart}}">
+    <view class="desc-wrapper" wx:if="{{status == 1}}">
       <view class="desc1">测测你的眼睛对色差的辨识度</view>
       <view class="desc2">点击开始试试吧</view>
     </view>
 
-    <view wx:if="{{isStart}}" class="grid-container" style="grid-template-columns:repeat({{level.number}}, 1fr);grid-template-rows:repeat({{level.number}}, 1fr);">
+    <view wx:if="{{status == 2 || status == 3}}" class="grid-container" style="grid-template-columns:repeat({{level.number}}, 1fr);grid-template-rows:repeat({{level.number}}, 1fr);">
       <block wx:for="{{level.array}}">
         <view class="grid-item-wrapper" style="border-radius: {{level.radius}}rpx;" @tap.stop="onClick({{index}})">
           <view class="grid-item" style="background-color:{{level.diffPosition == index ? level.diffColor : level.normalColor}};border-radius: {{level.radius}}rpx;">
@@ -17,14 +17,14 @@
       </block>
     </view>
 
-    <view class="level-desc" wx:if="{{isStart}}">第{{level.level}}关</view>
+    <view class="level-desc" wx:if="{{status == 2 || status == 3}}">第{{level.level}}关</view>
 
-    <view class="operate-wrapper" wx:if="{{isStart}}">
-      <view class="operate-pause" @tap.stop="onPauseClick">{{isPause ? '继续' : '暂停'}}</view>
+    <view class="operate-wrapper" wx:if="{{status == 2 || status == 3}}">
+      <view class="operate-pause" @tap.stop="onPauseClick">{{status == 3 ? '继续' : '暂停'}}</view>
       <view class="operate-reset" @tap.stop="onResetClick">重置</view>
     </view>
 
-    <view class="start-wrapper" wx:if="{{!isStart}}">
+    <view class="start-wrapper" wx:if="{{status == 1}}">
       <view class="operate-start" @tap.stop="onStartClick">开始</view>
     </view>
 
@@ -39,8 +39,7 @@
   export default class Index extends wepy.page {
 
     data = {
-      isStart: false, // 是否开始游戏
-      isPause: false, // 是否暂停
+      status : 1,  // 1:未开始 2：游戏中 3:游戏暂停 4：游戏结束
       counter: 60, // 倒计时
       timer: -1, // 定时器
       levels: [],  // 所有的级别
@@ -49,17 +48,17 @@
 
     methods = {
       onPauseClick() {
-        if (this.isPause) {
+        if (this.status == 3) {
           this.startTimer()
+          this.status = 2
         } else {
           this.stopTimer()
+          this.status = 3
         }
-        this.isPause = !this.isPause
         this.$apply()
       },
       onStartClick(){
-        this.isStart = true
-        this.isPause = false
+        this.status = 2
         this.counter = 60
         this.$apply()
         // 开始倒计时
@@ -68,12 +67,14 @@
       onResetClick(){
         // 重置倒计时
         this.stopTimer()
-        this.isStart = false
-        this.isPause = false
+        this.status = 1
         this.counter = 60
         this.$apply()
       },
       onClick(index) {
+        if (this.status != 2) {
+          return
+        }
         // 判断是否正确
         if (index == this.level.diffPosition) {
           // 跳转下一个级别
