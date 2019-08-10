@@ -1,10 +1,13 @@
 {
 	"description": "find color",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": false,
-		"minified": false
+		"minified": false,
+		"newFeature": true,
+		"autoAudits": false,
+		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
 	"appid": "wxbbb696e5a8f11b3b",

@@ -1,51 +1,71 @@
 <script>
-  import wepy from 'wepy';
-  import 'wepy-async-function';
+    import wepy from 'wepy';
+    import 'wepy-async-function';
 
-  import { setStore } from 'wepy-redux';
-  import configStore from './store';
+    import { setStore } from 'wepy-redux';
+    import configStore from './store';
 
-  const store = configStore();
-  setStore(store);
+    const store = configStore();
+    setStore(store);
 
-  export default class extends wepy.app {
-    config = {
-      pages: [
-        'pages/index'
-      ],
-      window: {
-        backgroundTextStyle: 'light',
-        navigationBarBackgroundColor: '#EA474E',
-        navigationBarTitleText: '找色差',
-        navigationBarTextStyle: 'white',
-        backgroundColor: '#EA474E'
-      }
-    };
+    export default class extends wepy.app {
+        config = {
+            pages: [
+                'pages/index'
+            ],
+            window: {
+                backgroundTextStyle: 'light',
+                navigationBarBackgroundColor: '#EA474E',
+                navigationBarTitleText: '找色差',
+                navigationBarTextStyle: 'white',
+                backgroundColor: '#EA474E'
+            }
+        };
 
-    globalData = {
-      userInfo: null
-    };
+        globalData = {
+            userInfo: null
+        };
 
-    constructor() {
-      super();
-      this.use('requestfix');
-    }
+        constructor() {
+            super();
+            this.use('requestfix');
+            this.use('promisify');
 
-    onLaunch() {
-
-    }
-
-    getUserInfo(cb) {
-      const that = this;
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo;
-      }
-      wepy.getUserInfo({
-        success(res) {
-          that.globalData.userInfo = res.userInfo;
-          cb && cb(res.userInfo);
+            // 添加网络拦截器
+            this.intercept('request', {
+                config(p) {
+                    console.log('reqeuest >>\n' + JSON.stringify(p));
+                    return p;
+                },
+                success(p) {
+                    console.log('response success >>\n' + JSON.stringify(p));
+                    return p;
+                },
+                fail(p) {
+                    console.log('response fail >>\n' + JSON.stringify(p));
+                    return p;
+                },
+                complete(p) {
+                    return p;
+                }
+            });
         }
-      });
+
+        onLaunch() {
+
+        }
+
+        getUserInfo(cb) {
+            const that = this;
+            if (this.globalData.userInfo) {
+                return this.globalData.userInfo;
+            }
+            wepy.getUserInfo({
+                success(res) {
+                    that.globalData.userInfo = res.userInfo;
+                    cb && cb(res.userInfo);
+                }
+            });
+        }
     }
-  }
 </script>

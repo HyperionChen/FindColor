@@ -1,287 +1,290 @@
 <template>
-  <view class="container">
-    <view class="counter" wx:if="{{status == 2 || status == 3}}">{{counter}}</view>
+    <view class="container">
+        <view class="counter" wx:if="{{status == 2 || status == 3}}">{{counter}}</view>
 
-    <view class="desc-wrapper" wx:if="{{status == 1}}">
-      <view class="desc1">测测你的眼睛对色差的辨识度</view>
-      <view class="desc2">点击开始试试吧</view>
-    </view>
-
-    <view wx:if="{{status == 2 || status == 3}}" class="grid-container" style="grid-template-columns:repeat({{level.number}}, 1fr);grid-template-rows:repeat({{level.number}}, 1fr);">
-      <block wx:for="{{level.array}}">
-        <view class="grid-item-wrapper" style="border-radius: {{level.radius}}rpx;" @tap.stop="onClick({{index}})">
-          <view class="grid-item" style="background-color:{{level.diffPosition == index ? level.diffColor : level.normalColor}};border-radius: {{level.radius}}rpx;">
-
-          </view>
+        <view class="desc-wrapper" wx:if="{{status == 1}}">
+            <view class="desc1">测测你的眼睛对色差的辨识度</view>
+            <view class="desc2">点击开始试试吧</view>
         </view>
-      </block>
+
+        <view wx:if="{{status == 2 || status == 3}}" class="grid-container"
+              style="grid-template-columns:repeat({{level.number}}, 1fr);grid-template-rows:repeat({{level.number}}, 1fr);">
+            <block wx:for="{{level.array}}">
+                <view class="grid-item-wrapper" style="border-radius: {{level.radius}}rpx;"
+                      @tap.stop="onClick({{index}})">
+                    <view class="grid-item"
+                          style="background-color:{{level.diffPosition == index ? level.diffColor : level.normalColor}};border-radius: {{level.radius}}rpx;">
+
+                    </view>
+                </view>
+            </block>
+        </view>
+
+        <view class="result-wrapper" wx:if="{{status == 4}}">
+            <view class="desc1">{{level.level}}关</view>
+            <view class="desc2">你眼睛色差辨识度水平：</view>
+            <view class="desc3">{{level.result}}</view>
+        </view>
+
+        <view class="level-desc" wx:if="{{status == 2 || status == 3}}">第{{level.level}}关</view>
+
+        <view class="operate-wrapper" wx:if="{{status == 2 || status == 3}}">
+            <view class="operate-left" @tap.stop="onPauseClick">{{status == 3 ? '继续' : '暂停'}}</view>
+            <view class="operate-right" @tap.stop="onResetClick">重置</view>
+        </view>
+
+        <view class="start-wrapper" wx:if="{{status == 1}}">
+            <view class="operate-center" @tap.stop="onStartClick">开始</view>
+        </view>
+
+        <view class="operate-wrapper" wx:if="{{status == 4}}">
+            <view class="operate-left" @tap.stop="onResetClick">重来</view>
+            <button class="operate-right" open-type="share" lang="zh_CN">分享</button>
+        </view>
+
     </view>
-
-    <view class="result-wrapper" wx:if="{{status == 4}}">
-      <view class="desc1">{{level.level}}关</view>
-      <view class="desc2">你眼睛色差辨识度水平：</view>
-      <view class="desc3">{{level.result}}</view>
-    </view>
-
-    <view class="level-desc" wx:if="{{status == 2 || status == 3}}">第{{level.level}}关</view>
-
-    <view class="operate-wrapper" wx:if="{{status == 2 || status == 3}}">
-      <view class="operate-left" @tap.stop="onPauseClick">{{status == 3 ? '继续' : '暂停'}}</view>
-      <view class="operate-right" @tap.stop="onResetClick">重置</view>
-    </view>
-
-    <view class="start-wrapper" wx:if="{{status == 1}}">
-      <view class="operate-center" @tap.stop="onStartClick">开始</view>
-    </view>
-
-    <view class="operate-wrapper" wx:if="{{status == 4}}">
-      <view class="operate-left" @tap.stop="onResetClick">重来</view>
-      <button class="operate-right" open-type="share" lang="zh_CN">分享</button>
-    </view>
-
-  </view>
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import tip from '@/utils/tip';
-  import levelManager from '@/utils/levelManager'
+    import wepy from 'wepy';
+    import tip from '@/utils/tip';
+    import levelManager from '@/utils/levelManager';
 
-  export default class Index extends wepy.page {
+    export default class Index extends wepy.page {
 
-    data = {
-      status : 1,  // 1:未开始 2：游戏中 3:游戏暂停 4：游戏结束
-      counter: 60, // 倒计时
-      timer: -1, // 定时器
-      levels: [],  // 所有的级别
-      level : null, // 当前的级别
-    };
+        data = {
+            status: 1,  // 1:未开始 2：游戏中 3:游戏暂停 4：游戏结束
+            counter: 60, // 倒计时
+            timer: -1, // 定时器
+            levels: [],  // 所有的级别
+            level: null // 当前的级别
+        };
 
-    methods = {
-      onPauseClick() {
-        if (this.status == 3) {
-          this.startTimer()
-          this.status = 2
-        } else {
-          this.stopTimer()
-          this.status = 3
+        methods = {
+            onPauseClick() {
+                if (this.status == 3) {
+                    this.startTimer();
+                    this.status = 2;
+                } else {
+                    this.stopTimer();
+                    this.status = 3;
+                }
+                this.$apply();
+            },
+            onStartClick() {
+                this.status = 2;
+                this.counter = 60;
+                this.$apply();
+                // 开始倒计时
+                this.startTimer();
+            },
+            onResetClick() {
+                // 重置倒计时
+                this.stopTimer();
+                this.status = 1;
+                this.counter = 60;
+                // 重置关卡
+                this.level = this.levels[0];
+                this.$apply();
+            },
+            onClick(index) {
+                if (this.status != 2) {
+                    return;
+                }
+                // 判断是否正确
+                if (index == this.level.diffPosition) {
+                    // 跳转下一个级别
+                    let position = this.levels.findIndex(it => {
+                        return it.level == this.level.level;
+                    });
+                    // 判断是否结束了
+                    if (position == -1 || position >= this.levels.length - 1) {
+                        this.gameOver();
+                        return;
+                    }
+                    // 开启下一关
+                    this.level = this.levels[position + 1];
+                    console.error('normal:' + this.level.normalColor + ',diff:' + this.level.diffColor);
+                    this.$apply();
+                }
+            }
+        };
+
+        startTimer() {
+            let that = this;
+            this.timer = setInterval(() => {
+                if (that.counter >= 1) {
+                    that.counter--;
+                    that.$apply();
+                } else {
+                    that.gameOver();
+                }
+            }, 1000);
         }
-        this.$apply()
-      },
-      onStartClick(){
-        this.status = 2
-        this.counter = 60
-        this.$apply()
-        // 开始倒计时
-        this.startTimer()
-      },
-      onResetClick(){
-        // 重置倒计时
-        this.stopTimer()
-        this.status = 1
-        this.counter = 60
-        // 重置关卡
-        this.level = this.levels[0]
-        this.$apply()
-      },
-      onClick(index) {
-        if (this.status != 2) {
-          return
+
+        stopTimer() {
+            clearInterval(this.timer);
         }
-        // 判断是否正确
-        if (index == this.level.diffPosition) {
-          // 跳转下一个级别
-          let position = this.levels.findIndex(it=>{
-            return it.level == this.level.level
-          })
-          // 判断是否结束了
-          if (position == -1 || position >= this.levels.length - 1) {
-            this.gameOver()
-            return
-          }
-          // 开启下一关
-          this.level = this.levels[position + 1]
-          console.error('normal:' + this.level.normalColor + ",diff:" + this.level.diffColor)
-          this.$apply()
+
+        gameOver() {
+            // 重置倒计时
+            this.stopTimer();
+            this.status = 4;
+            this.$apply();
         }
-      },
-    };
 
-    startTimer() {
-      let that = this
-      this.timer = setInterval(()=>{
-        if (that.counter >= 1) {
-          that.counter --;
-          that.$apply()
-        } else {
-          that.gameOver()
+        onLoad() {
+            wx.showShareMenu({
+                withShareTicket: true
+            });
+            this.levels = levelManager.getLevels();
+            this.level = this.levels[0];
+            this.$apply();
         }
-      }, 1000)
-    }
 
-    stopTimer() {
-      clearInterval(this.timer)
+        onShareAppMessage() {
+            return {
+                title: '测测你的眼睛对色差的辨识度',
+                path: 'pages/index'
+            };
+        }
     }
-
-    gameOver(){
-      // 重置倒计时
-      this.stopTimer()
-      this.status = 4
-      this.$apply()
-    }
-
-    onLoad() {
-      wx.showShareMenu({
-        withShareTicket: true
-      })
-      this.levels = levelManager.getLevels()
-      this.level = this.levels[0]
-      this.$apply()
-    }
-
-    onShareAppMessage() {
-       return {
-         title: '测测你的眼睛对色差的辨识度',
-         path: 'pages/index',
-       }
-    }
-  }
 </script>
 
 <style lang="less">
-  @import "src/res/styles/base.less";
+    @import "src/res/styles/base.less";
 
-  .container {
-    width: 100%;
-    height: 100%;
-    background-color: #EA474E;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-  }
-
-  .counter {
-    color: @color-white;
-    font-size: 80rpx;
-    margin-top: 40rpx;
-    font-weight: bold;
-  }
-
-  .desc-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 70rpx;
-
-    .desc1 {
-      font-size: 50rpx;
-      color: @color-white;
-      font-weight: bold;
+    .container {
+        width: 100%;
+        height: 100%;
+        background-color: #EA474E;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
     }
 
-    .desc2 {
-      font-size: 40rpx;
-      color: @color-white;
-      font-weight: bold;
+    .counter {
+        color: @color-white;
+        font-size: 80rpx;
+        margin-top: 40rpx;
+        font-weight: bold;
     }
 
-  }
+    .desc-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 70rpx;
 
-  .grid-container {
-    width: 700rpx;
-    height:700rpx;
-    display:grid;
-    margin-top: 20rpx;
-  }
+        .desc1 {
+            font-size: 50rpx;
+            color: @color-white;
+            font-weight: bold;
+        }
 
-  .grid-item-wrapper {
-    background-color: @color-white;
-    padding: 10rpx;
-    box-sizing:border-box;
-    display: flex;
-    flex-direction: column;
-  }
+        .desc2 {
+            font-size: 40rpx;
+            color: @color-white;
+            font-weight: bold;
+        }
 
-  .grid-item {
-    width: 100%;
-    height:100%;
-  }
-
-  .result-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 70rpx;
-
-    .desc1 {
-      font-size: 80rpx;
-      color: @color-white;
-      font-weight: bold;
     }
 
-    .desc2 {
-      font-size: 50rpx;
-      color: @color-white;
-      font-weight: bold;
-      margin-top: 10rpx;
+    .grid-container {
+        width: 700rpx;
+        height: 700rpx;
+        display: grid;
+        margin-top: 20rpx;
     }
 
-    .desc3 {
-      font-size: 80rpx;
-      color: @color-black;
-      font-weight: bold;
-      margin-top: 15rpx;
+    .grid-item-wrapper {
+        background-color: @color-white;
+        padding: 10rpx;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
 
-  }
+    .grid-item {
+        width: 100%;
+        height: 100%;
+    }
 
-  .level-desc {
-    font-size: 40rpx;
-    color: @color-white;
-    font-weight: bold;
-    margin-top: 50rpx;
-  }
+    .result-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 70rpx;
 
-  .operate-wrapper {
-    width: 100%;
-    position: absolute;
-    bottom: 80rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+        .desc1 {
+            font-size: 80rpx;
+            color: @color-white;
+            font-weight: bold;
+        }
 
-  .operate-item {
-    color: @color-white;
-    height: 50rpx;
-    border-radius: 10rpx;
-    background-color: #F99E1E;
-    padding: 20rpx 50rpx 20rpx 50rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 40rpx;
-  }
+        .desc2 {
+            font-size: 50rpx;
+            color: @color-white;
+            font-weight: bold;
+            margin-top: 10rpx;
+        }
 
-  .operate-left:extend(.operate-item) {
-    margin-left: 50rpx;
-  }
+        .desc3 {
+            font-size: 80rpx;
+            color: @color-black;
+            font-weight: bold;
+            margin-top: 15rpx;
+        }
 
-  .operate-right:extend(.operate-item) {
-    margin-right: 50rpx;
-    box-sizing: unset;
-  }
+    }
 
-  .start-wrapper:extend(.operate-wrapper) {
-    justify-content: center;
-  }
+    .level-desc {
+        font-size: 40rpx;
+        color: @color-white;
+        font-weight: bold;
+        margin-top: 50rpx;
+    }
 
-  .operate-center:extend(.operate-item) {
-    padding: 20rpx 90rpx 20rpx 90rpx;
-  }
+    .operate-wrapper {
+        width: 100%;
+        position: absolute;
+        bottom: 80rpx;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .operate-item {
+        color: @color-white;
+        height: 50rpx;
+        border-radius: 10rpx;
+        background-color: #F99E1E;
+        padding: 20rpx 50rpx 20rpx 50rpx;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 40rpx;
+    }
+
+    .operate-left:extend(.operate-item) {
+        margin-left: 50rpx;
+    }
+
+    .operate-right:extend(.operate-item) {
+        margin-right: 50rpx;
+        box-sizing: unset;
+    }
+
+    .start-wrapper:extend(.operate-wrapper) {
+        justify-content: center;
+    }
+
+    .operate-center:extend(.operate-item) {
+        padding: 20rpx 90rpx 20rpx 90rpx;
+    }
 </style>
